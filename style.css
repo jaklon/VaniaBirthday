@@ -1,0 +1,319 @@
+body {
+  font-family: "Montserrat", sans-serif;
+  background-color: #fff0f5; /* Lavender Blush - Pink Sangat Muda */
+  color: #333;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.display-4 {
+  font-family: "Pacifico", cursive;
+}
+
+.bg-light {
+  background-color: #fff5f8 !important; /* Latar belakang pink lebih muda */
+}
+
+.text-pink {
+  color: #ff8fab !important; /* Warna pink medium */
+}
+
+/* Hero Section */
+.hero {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  /* GANTI URL GAMBAR DI BAWAH INI DENGAN FOTO TERBAIK KALIAN */
+  background: url("/asset/BG\ Hero\ Fix.png") no-repeat center center/cover;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero .btn-custom {
+  background-color: #ffafcc; /* Pink Muda */
+  border-color: #ffafcc;
+  color: white;
+  padding: 12px 30px;
+  font-size: 1.2rem;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+.hero .btn-custom:hover {
+  background-color: #ff8fab; /* Pink Medium */
+  border-color: #ff8fab;
+  transform: scale(1.05);
+}
+
+/* Timeline Section */
+.timeline {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.timeline::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  background-color: #ffafcc; /* Pink Muda */
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  margin-left: -3px;
+}
+
+.timeline-container {
+  padding: 10px 40px;
+  position: relative;
+  background-color: inherit;
+  width: 50%;
+}
+
+.timeline-container.left {
+  left: 0;
+}
+
+.timeline-container.right {
+  left: 50%;
+}
+
+.timeline-container::after {
+  content: "";
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  right: -17px;
+  background-color: white;
+  border: 4px solid #ffafcc; /* Pink Muda */
+  top: 15px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.right::after {
+  left: -16px;
+}
+
+.timeline-content {
+  padding: 20px 30px;
+  background-color: white;
+  position: relative;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-content img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+/* Gallery Section */
+.gallery-item {
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.1);
+}
+
+/* Chat Gallery Section */
+.chat-item {
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.chat-item img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+/* Quote Machine Section */
+.quote-box {
+  background-color: white;
+  border-left: 5px solid #ffafcc; /* Pink Muda */
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.quote-text {
+  font-style: italic;
+  font-size: 1.25rem;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.btn-quote {
+  background-color: #ff8fab; /* Pink Medium */
+  border-color: #ff8fab;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-quote:hover {
+  background-color: #ffafcc; /* Pink Muda */
+  border-color: #ffafcc;
+  transform: scale(1.05);
+}
+
+/* Memory Game Section */
+.memory-game-container {
+  perspective: 1000px;
+}
+.memory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  max-width: 600px;
+  margin: auto;
+}
+.memory-card {
+  background-color: transparent;
+  width: 100%;
+  aspect-ratio: 1/1;
+  border-radius: 8px;
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+  cursor: pointer;
+}
+.memory-card.is-flipped {
+  transform: rotateY(180deg);
+}
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: white;
+}
+.card-front {
+  background-color: #ffafcc; /* Pink Muda */
+}
+.card-back {
+  background-size: cover;
+  background-position: center;
+  transform: rotateY(180deg);
+}
+.memory-card.is-matched {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Letter Section */
+.letter-section {
+  background-color: white;
+  padding: 60px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+#bucket-list ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+#bucket-list li {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#bucket-list li i {
+  color: #ffafcc; /* Pink Muda */
+  margin-right: 10px;
+}
+
+.delete-btn {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.delete-btn:hover {
+  color: #ff8fab; /* Pink Medium */
+}
+
+.btn-outline-pink {
+  color: #ff8fab;
+  border-color: #ff8fab;
+}
+.btn-outline-pink:hover {
+  color: #fff;
+  background-color: #ff8fab;
+  border-color: #ff8fab;
+}
+
+/* Footer */
+footer {
+  background-color: #333;
+  color: white;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .timeline::after {
+    left: 31px;
+  }
+
+  .timeline-container {
+    width: 100%;
+    padding-left: 70px;
+    padding-right: 25px;
+  }
+
+  .timeline-container.right {
+    left: 0%;
+  }
+
+  .timeline-container.left::after,
+  .timeline-container.right::after {
+    left: 15px;
+  }
+}

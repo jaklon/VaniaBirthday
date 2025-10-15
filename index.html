@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Selamat Ulang Tahun, My Queen!</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <!-- AOS (Animate on Scroll) CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- 1. Halaman Pembuka / Landing Page -->
+    <section class="hero">
+      <div class="hero-content" data-aos="fade-in" data-aos-duration="1500">
+        <!-- GANTI NAMA PANGGILAN DI BAWAH INI -->
+        <h1 class="display-4 mb-4">Selamat Ulang Tahun, My Queen!</h1>
+        <!-- GANTI TEKS PENGANTAR SESUAI KEINGINANMU -->
+        <p class="lead mb-5">
+          Aku membuat ini khusus untukmu. Sebuah perjalanan kecil untuk
+          mengingat kembali kisah kita.
+        </p>
+        <a href="#timeline" class="btn btn-custom scroll-link"
+          >Mulai Petualangan Kita</a
+        >
+        <div class="mt-4">
+          <p class="small mb-1">Putar lagu kita:</p>
+          <!-- GANTI src DENGAN URL FILE LAGU KAMU (misal dari Google Drive) atau hapus jika tidak perlu -->
+          <audio controls>
+            <source
+              src="/asset/DJ SELAMAT ULANG TAHUN ( BIRTHDAY SONG) STYLE PARTY NROTOK MIDLE NULUP BASS NGUK BLAYER (1).mp3"
+              type="audio/mpeg"
+            />
+            Browser Anda tidak mendukung elemen audio.
+          </audio>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Linimasa Kisah Kita -->
+    <section id="timeline" class="py-5">
+      <div class="container">
+        <div class="row text-center mb-5">
+          <div class="col">
+            <h2 class="display-4">Linimasa Kisah Kita</h2>
+            <p class="lead">Setiap momen bersamamu adalah favoritku.</p>
+          </div>
+        </div>
+
+        <div class="timeline">
+          <!-- CONTOH TIMELINE ITEM 1 (Kiri) -->
+          <div class="timeline-container left" data-aos="fade-right">
+            <div class="timeline-content">
+              <h2>14 Agustus 2025 - Pertama Bertemu</h2>
+              <img src="/asset/Roblox/salon.jpeg" alt="Pertama Bertemu" />
+              <p>
+                Di hari inilah semua dimulai. Aku tidak pernah menyangka obrolan
+                sederhana kita akan membawaku pada petualangan seindah ini.
+                Terima kasih sudah hadir di hidupku.
+              </p>
+            </div>
+          </div>
+          <!-- CONTOH TIMELINE ITEM 2 (Kanan) -->
+          <div class="timeline-container right" data-aos="fade-left">
+            <div class="timeline-content">
+              <h2>17 Agustus 2025 - Day One Meet Up</h2>
+              <img
+                src="/asset/mokopi-transyogi-bogor.jpg"
+                alt="Kencan Pertama"
+              />
+              <p>
+                Aku masih ingat betapa gilanya hari itu. Kita duduk di kafe itu,
+                dan waktu terasa berhenti. Momen ini akan selalu jadi salah satu
+                yang paling berharga.
+              </p>
+            </div>
+          </div>
+          <!-- TAMBAHKAN TIMELINE ITEM LAINNYA DI SINI -->
+          <div class="timeline-container left" data-aos="fade-right">
+            <div class="timeline-content">
+              <h2>5 Oktober 2025 - Hari Jadian Kita</h2>
+              <img src="/asset/hari jadianpng.png" alt="Liburan" />
+              <p>
+                Di tengah suasana hangat Cafe Lot 9, Senyum manismu saat
+                menerima cintaku menjadi salah satu kenangan terindah yang tak
+                akan pernah kulupakan. Sejak hari itu, kisah kita pun dimulai.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Galeri Momen Kecil -->
+    <section id="gallery" class="py-5 bg-light">
+      <div class="container">
+        <div class="row text-center mb-5">
+          <div class="col">
+            <h2 class="display-4">Momen-Momen Kecil</h2>
+            <p class="lead">Karena kebahagiaan ada di hal-hal sederhana.</p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- GANTI SEMUA FOTO DI BAWAH INI -->
+          <div class="col-md-4 col-sm-6">
+            <div class="gallery-item" data-aos="zoom-in-up">
+              <img src="/asset/foto lucu/1.png" alt="Gallery 1" />
+            </div>
+          </div>
+          <div class="col-md-4 col-sm-6">
+            <div
+              class="gallery-item"
+              data-aos="zoom-in-up"
+              data-aos-delay="100"
+            >
+              <img src="/asset/foto lucu/2.png" alt="Gallery 2" />
+            </div>
+          </div>
+          <div class="col-md-4 col-sm-6">
+            <div
+              class="gallery-item"
+              data-aos="zoom-in-up"
+              data-aos-delay="200"
+            >
+              <img src="/asset/foto lucu/3.png" alt="Gallery 3" />
+            </div>
+          </div>
+          <div class="col-md-4 col-sm-6">
+            <div
+              class="gallery-item"
+              data-aos="zoom-in-up"
+              data-aos-delay="300"
+            >
+              <img src="/asset/gemes/gemes 1.png" alt="Gallery 4" />
+            </div>
+          </div>
+          <div class="col-md-4 col-sm-6">
+            <div
+              class="gallery-item"
+              data-aos="zoom-in-up"
+              data-aos-delay="400"
+            >
+              <img src="/asset/gemes/gemes 2.png" alt="Gallery 5" />
+            </div>
+          </div>
+          <div class="col-md-4 col-sm-6">
+            <div
+              class="gallery-item"
+              data-aos="zoom-in-up"
+              data-aos-delay="500"
+            >
+              <img src="/asset/gemes/gemes 3.png" alt="Gallery 6" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Galeri Roblox -->
+    <section id="roblox-gallery" class="py-5">
+      <div class="container">
+        <div class="row text-center mb-5">
+          <div class="col">
+            <h2 class="display-4">Petualangan Roblox Kita</h2>
+            <p class="lead">
+              Di mana kita membangun dunia kita sendiri, balok demi balok.
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- GANTI SEMUA FOTO ROBLOX DI BAWAH INI -->
+          <div class="col-md-4 col-sm-6">
+            <div class="gallery-item" data-aos="zoom-in-up">
+              <img src="/asset/Roblox/1.png" alt="Roblox 1" />
+            </div>
+          </div>
+          <div class="col-md-4 col-sm-6">
+            <div
+              class="gallery-item"
+              data-aos="zoom-in-up"
+              data-aos-delay="100"
+            >
+              <img src="/asset/Roblox/2.png" alt="Roblox 2" />
+            </div>
+          </div>
+          <div class="col-md-4 col-sm-6">
+            <div
+              class="gallery-item"
+              data-aos="zoom-in-up"
+              data-aos-delay="200"
+            >
+              <img src="/asset/Roblox/3.png" alt="Roblox 3" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Mesin Kutipan Acak -->
+    <section id="quotes" class="py-5 bg-light">
+      <div class="container">
+        <div class="row text-center mb-5">
+          <div class="col">
+            <h2 class="display-4">Kamus Hubungan Kita</h2>
+            <p class="lead">
+              Kumpulan celetukan absurd yang cuma kita yang ngerti.
+            </p>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-lg-8" data-aos="fade-up">
+            <div class="quote-box">
+              <p id="quote-display" class="quote-text">
+                Klik tombol di bawah untuk melihat kenangan konyol kita!
+              </p>
+            </div>
+            <div class="text-center mt-4">
+              <button id="new-quote-btn" class="btn btn-quote btn-lg">
+                Acak Kutipan!
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. BARU: Galeri Chat -->
+    <section id="chat-gallery" class="py-5">
+      <div class="container">
+        <div class="row text-center mb-5">
+          <div class="col">
+            <h2 class="display-4">Hall of Fame Chat Kita</h2>
+            <p class="lead">Beberapa bukti digital dari kekonyolan kita.</p>
+          </div>
+        </div>
+        <div class="row">
+          <!-- GANTI URL SCREENSHOT DI BAWAH INI -->
+          <div class="col-lg-4 col-md-6">
+            <div class="chat-item" data-aos="fade-up">
+              <img src="/asset/snip dc 1.jpg" alt="Screenshot Chat 1" />
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="chat-item" data-aos="fade-up" data-aos-delay="100">
+              <img src="/asset/Snip dc 2.jpg" alt="Screenshot Chat 2" />
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="chat-item" data-aos="fade-up" data-aos-delay="200">
+              <img src="/asset/snip dc.jpg" alt="Screenshot Chat 3" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Game Pasangkan Kenangan -->
+    <section id="memory-game" class="py-5 bg-light">
+      <div class="container">
+        <div class="row text-center mb-5">
+          <div class="col">
+            <h2 class="display-4">Pasangkan Kenangan Kita</h2>
+            <p class="lead">Bisakah kamu menemukan semua pasangan foto kita?</p>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-lg-8" data-aos="fade-up">
+            <div class="memory-game-container">
+              <div id="memory-grid" class="memory-grid">
+                <!-- Kartu game akan dibuat oleh JavaScript -->
+              </div>
+            </div>
+            <div id="game-status" class="text-center mt-4">
+              <p class="lead">
+                Jumlah Langkah: <span id="move-counter">0</span>
+              </p>
+              <button id="reset-game-btn" class="btn btn-quote">
+                Mulai Ulang
+              </button>
+            </div>
+            <div
+              id="win-message"
+              class="alert alert-success mt-4 text-center"
+              style="display: none"
+            >
+              <h4>Yey, Kamu Menang!</h4>
+              <p>Kamu memang yang paling hafal semua kenangan kita. Hebat!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Kuis Kenangan Kita -->
+    <section id="quiz" class="py-5">
+      <div class="container">
+        <div class="row text-center mb-5">
+          <div class="col">
+            <h2 class="display-4">Kuis Kenangan Kita</h2>
+            <p class="lead">
+              Seberapa ingat kamu dengan detail cerita kita? Yuk, coba jawab!
+            </p>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-lg-8" data-aos="fade-up">
+            <div id="quiz-container" class="card p-4 shadow-sm">
+              <!-- Pertanyaan akan dimuat di sini oleh JavaScript -->
+            </div>
+            <div
+              id="quiz-result"
+              class="text-center mt-4"
+              style="display: none"
+            >
+              <h3>Hasil Kuis</h3>
+              <p id="result-text" class="lead"></p>
+              <button class="btn btn-custom" onclick="restartQuiz()">
+                Coba Lagi
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. Surat dan Masa Depan -->
+    <section id="letter" class="py-5 bg-light">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-10">
+            <div class="letter-section" data-aos="fade-up">
+              <h2 class="display-4 text-center mb-4">Surat Untukmu</h2>
+              <!-- GANTI ISI SURAT DI BAWAH INI -->
+              <p class="lead">Hai sayang,</p>
+              <p>
+                Selamat ulang tahun, ya. Di hari yang spesial ini, aku ingin
+                kamu tahu betapa berartinya kamu untukku. Melihat semua kenangan
+                kita lagi membuatku sadar, aku adalah orang yang sangat
+                beruntung karena memilikimu.
+              </p>
+              <p>
+                Kamu bukan hanya pacarku, tapi juga sahabat terbaikku,
+                penyemangat terbesarku, dan tempatku pulang. Terima kasih untuk
+                semua tawa, dukungan, dan kesabaranmu. Aku belajar banyak hal
+                darimu setiap hari.
+              </p>
+              <p>
+                Semoga di usiamu yang baru ini, kamu semakin bahagia, semua
+                impianmu tercapai, dan kamu selalu sehat. Aku akan selalu ada di
+                sini untukmu, mendukungmu, dan berjalan bersamamu. Aku tidak
+                sabar untuk menciptakan lebih banyak lagi kenangan indah
+                bersama.
+              </p>
+              <p>Aku sayang kamu, selalu.</p>
+              <hr class="my-5" />
+
+              <div id="bucket-list" class="text-center">
+                <h3>Petualangan Kita Selanjutnya</h3>
+                <ul id="future-list" class="mt-4 d-inline-block text-start">
+                  <!-- GANTI DAFTAR BUCKET LIST DI BAWAH INI -->
+                  <li data-aos="fade-right" data-aos-delay="100">
+                    <span
+                      ><i class="bi bi-check-circle-fill"></i> Nonton konser
+                      bareng</span
+                    >
+                    <i class="bi bi-trash-fill delete-btn"></i>
+                  </li>
+                  <li data-aos="fade-right" data-aos-delay="200">
+                    <span
+                      ><i class="bi bi-check-circle-fill"></i> Liburan ke
+                      Bromo</span
+                    >
+                    <i class="bi bi-trash-fill delete-btn"></i>
+                  </li>
+                  <li data-aos="fade-right" data-aos-delay="300">
+                    <span
+                      ><i class="bi bi-check-circle-fill"></i> Belajar masak
+                      masakan baru</span
+                    >
+                    <i class="bi bi-trash-fill delete-btn"></i>
+                  </li>
+                  <li data-aos="fade-right" data-aos-delay="400">
+                    <span
+                      ><i class="bi bi-check-circle-fill"></i> Adopsi
+                      kucing!</span
+                    >
+                    <i class="bi bi-trash-fill delete-btn"></i>
+                  </li>
+                </ul>
+
+                <div class="mt-4">
+                  <h5>Apa lagi mimpi kita selanjutnya?</h5>
+                  <div
+                    class="input-group mt-3 mx-auto"
+                    style="max-width: 400px"
+                  >
+                    <input
+                      type="text"
+                      id="new-item-input"
+                      class="form-control"
+                      placeholder="Tulis di sini..."
+                    />
+                    <button
+                      class="btn btn-outline-pink"
+                      type="button"
+                      id="add-item-btn"
+                    >
+                      Tambahkan
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-4 text-center">
+      <div class="container">
+        <!-- GANTI DENGAN NAMAMU -->
+        <p class="mb-0">
+          Dibuat dengan <i class="bi bi-heart-fill text-pink"></i> oleh [Nama
+          Kamu]
+        </p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+  </body>
+</html>
