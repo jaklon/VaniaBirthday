@@ -19,10 +19,10 @@ document.querySelectorAll(".scroll-link").forEach((anchor) => {
 const insideJokes = [
   "PMS = Pose Malone Stress",
   "Pengen Nyari Ayam",
-  "",
+  "dasar boti",
   "I love you to the moon and back",
   "'tuh ternyata kamu begitu, coba pas masih di mokopi'",
-  "",
+  "Ga Mood",
 ];
 const quoteDisplay = document.getElementById("quote-display");
 const newQuoteBtn = document.getElementById("new-quote-btn");
