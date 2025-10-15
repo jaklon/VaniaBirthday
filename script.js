@@ -143,24 +143,19 @@ const quizData = [
     answer: "Lot 9",
   },
   {
-    question: "Apa judul film pertama yang kita tonton bareng di bioskop?",
-    options: [
-      "Avengers: Endgame",
-      "Spider-Man: No Way Home",
-      "Agak Laen",
-      "Dilan 1990",
-    ],
-    answer: "Agak Laen",
+    question: "Apa Warna Favorite Kita Berdua?",
+    options: ["Biru", "Ungu", "Merah", "Pink"],
+    answer: "Pink",
   },
   {
-    question: "Apa makanan favoritku yang sering kamu masakin?",
+    question: "Tanggal Berapa Kita Bertemu Pertama Kali?",
     options: [
-      "Nasi Goreng Spesial",
-      "Spaghetti Carbonara",
-      "Ayam Geprek",
-      "Sate Padang",
+      "16 Agustus 2025",
+      "17 Agustus 2025",
+      "18 Agustus 2025",
+      "19 Agustus 2025",
     ],
-    answer: "Sate Padang",
+    answer: "17 Agustus 2025",
   },
 ];
 let currentQuestionIndex = 0;
