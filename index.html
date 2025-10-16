@@ -379,35 +379,7 @@
               <div id="bucket-list" class="text-center">
                 <h3>Petualangan Kita Selanjutnya</h3>
                 <ul id="future-list" class="mt-4 d-inline-block text-start">
-                  <!-- GANTI DAFTAR BUCKET LIST DI BAWAH INI -->
-                  <li data-aos="fade-right" data-aos-delay="100">
-                    <span
-                      ><i class="bi bi-check-circle-fill"></i> Nonton konser
-                      bareng</span
-                    >
-                    <i class="bi bi-trash-fill delete-btn"></i>
-                  </li>
-                  <li data-aos="fade-right" data-aos-delay="200">
-                    <span
-                      ><i class="bi bi-check-circle-fill"></i> Liburan ke
-                      Bromo</span
-                    >
-                    <i class="bi bi-trash-fill delete-btn"></i>
-                  </li>
-                  <li data-aos="fade-right" data-aos-delay="300">
-                    <span
-                      ><i class="bi bi-check-circle-fill"></i> Belajar masak
-                      masakan baru</span
-                    >
-                    <i class="bi bi-trash-fill delete-btn"></i>
-                  </li>
-                  <li data-aos="fade-right" data-aos-delay="400">
-                    <span
-                      ><i class="bi bi-check-circle-fill"></i> Adopsi
-                      kucing!</span
-                    >
-                    <i class="bi bi-trash-fill delete-btn"></i>
-                  </li>
+                  <!-- Daftar item akan dimuat dari Firebase -->
                 </ul>
 
                 <div class="mt-4">
@@ -454,7 +426,7 @@
     <!-- AOS JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-    <!-- Custom JavaScript -->
-    <script src="script.js"></script>
+    <!-- Firebase SDK - PENTING: Menggunakan type="module" -->
+    <script type="module" src="script.js"></script>
   </body>
 </html>

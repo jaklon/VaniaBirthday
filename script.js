@@ -1,3 +1,21 @@
+// --- Firebase Imports ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  signInAnonymously,
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  onSnapshot,
+  deleteDoc,
+  doc,
+  query,
+  orderBy,
+  serverTimestamp,
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 // Inisialisasi AOS
 AOS.init({
   duration: 1000,
@@ -41,7 +59,6 @@ const moveCounter = document.getElementById("move-counter");
 const winMessage = document.getElementById("win-message");
 const resetGameBtn = document.getElementById("reset-game-btn");
 
-// GANTI URL GAMBAR DI BAWAH INI DENGAN FOTO-FOTO KALIAN (6 foto berbeda)
 const imageUrls = [
   "/asset/drive-download-20251014T185017Z-1-001/teka.HEIC",
   "/asset/drive-download-20251014T185017Z-1-001/teka 1.HEIC",
@@ -65,11 +82,10 @@ function createBoard() {
   memoryGrid.innerHTML = "";
   winMessage.style.display = "none";
   shuffle(cardsArray);
-  cardsArray.forEach((imageUrl, index) => {
+  cardsArray.forEach((imageUrl) => {
     const card = document.createElement("div");
     card.classList.add("memory-card");
     card.dataset.imageUrl = imageUrl;
-
     card.innerHTML = `
             <div class="card-face card-front"><i class="bi bi-question-lg"></i></div>
             <div class="card-face card-back" style="background-image: url('${imageUrl}')"></div>
@@ -81,11 +97,9 @@ function createBoard() {
 function flipCard(e) {
   if (lockBoard) return;
   const clickedCard = e.target.closest(".memory-card");
-
   if (clickedCard && !clickedCard.classList.contains("is-flipped")) {
     clickedCard.classList.add("is-flipped");
     flippedCards.push(clickedCard);
-
     if (flippedCards.length === 2) {
       moves++;
       moveCounter.textContent = moves;
@@ -131,8 +145,6 @@ function resetGame() {
 
 memoryGrid.addEventListener("click", flipCard);
 resetGameBtn.addEventListener("click", resetGame);
-
-// Initial game setup
 createBoard();
 
 // JAVASCRIPT UNTUK KUIS KENANGAN
@@ -163,6 +175,7 @@ let score = 0;
 const quizContainer = document.getElementById("quiz-container");
 const quizResult = document.getElementById("quiz-result");
 const resultText = document.getElementById("result-text");
+
 function loadQuiz() {
   if (currentQuestionIndex < quizData.length) {
     const currentQuestion = quizData[currentQuestionIndex];
@@ -180,55 +193,146 @@ function loadQuiz() {
     showResults();
   }
 }
+
 function selectAnswer(selectedOption) {
   if (selectedOption === quizData[currentQuestionIndex].answer) score++;
   currentQuestionIndex++;
   loadQuiz();
 }
+
 function showResults() {
   quizContainer.style.display = "none";
   quizResult.style.display = "block";
   resultText.innerText = `Kamu berhasil menjawab ${score} dari ${quizData.length} pertanyaan dengan benar! Hebat! Terima kasih sudah mengingat semua detail kecil tentang kita. ❤️`;
 }
-function restartQuiz() {
+
+window.restartQuiz = function () {
   currentQuestionIndex = 0;
   score = 0;
   quizContainer.style.display = "block";
   quizResult.style.display = "none";
   loadQuiz();
-}
+};
+window.selectAnswer = selectAnswer; // Make it globally accessible for inline onclick
 loadQuiz();
 
-// Fungsi untuk menambahkan item baru ke bucket list
+// --- JAVASCRIPT UNTUK BUCKET LIST DENGAN FIREBASE ---
+
+// --- Konfigurasi Firebase Anda ---
+// Konfigurasi ini diambil dari proyek Anda. Pastikan semua nilainya benar.
+const firebaseConfig = {
+  apiKey: "AIzaSyBOsDhRSsXzBvPFHrx-vOMmzOxKE20Wjp4",
+  authDomain: "birthdayvania.firebaseapp.com",
+  projectId: "birthdayvania",
+  storageBucket: "birthdayvania.appspot.com", // PERBAIKAN: Menggunakan domain .appspot.com yang umum
+  messagingSenderId: "693336676503",
+  appId: "1:693336676503:web:8f5823164a37633f4671d2",
+  measurementId: "G-D40CGYLLMR",
+};
+
+// --- Inisialisasi Firebase ---
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// --- Referensi Koleksi ---
+// Nama koleksi disarankan menggunakan format camelCase
+const bucketListCollectionRef = collection(db, "bucketListItems");
+
+// --- Elemen DOM ---
 const addButton = document.getElementById("add-item-btn");
 const inputField = document.getElementById("new-item-input");
 const futureList = document.getElementById("future-list");
-function addNewItem() {
+
+// --- Fungsi untuk Merender Item ---
+const renderListItem = (doc) => {
+  const li = document.createElement("li");
+  li.setAttribute("data-id", doc.id);
+  li.setAttribute("data-aos", "fade-right");
+  li.innerHTML = `<span><i class="bi bi-check-circle-fill"></i> ${
+    doc.data().text
+  }</span><i class="bi bi-trash-fill delete-btn"></i>`;
+  futureList.appendChild(li);
+};
+
+// --- Fungsi untuk Menambah Item ---
+const addNewItem = async () => {
   const newItemText = inputField.value.trim();
   if (newItemText !== "") {
-    const newLi = document.createElement("li");
-    newLi.innerHTML = `<span><i class="bi bi-check-circle-fill"></i> ${newItemText}</span><i class="bi bi-trash-fill delete-btn"></i>`;
-    newLi.setAttribute("data-aos", "fade-right");
-    futureList.appendChild(newLi);
-    inputField.value = "";
-    setTimeout(() => {
-      AOS.refresh();
-    }, 100);
+    try {
+      await addDoc(bucketListCollectionRef, {
+        text: newItemText,
+        createdAt: serverTimestamp(),
+      });
+      inputField.value = "";
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      alert("Gagal menambahkan item. Cek konsol untuk detailnya.");
+    }
   }
-}
+};
+
+// --- Fungsi untuk Menghapus Item ---
+const deleteItem = async (id) => {
+  try {
+    await deleteDoc(doc(db, "bucketListItems", id));
+  } catch (e) {
+    console.error("Error deleting document: ", e);
+    alert("Gagal menghapus item. Cek konsol untuk detailnya.");
+  }
+};
+
+// --- Otentikasi dan Listener Real-time ---
+const setupRealtimeListener = () => {
+  const q = query(bucketListCollectionRef, orderBy("createdAt", "asc"));
+  onSnapshot(
+    q,
+    (snapshot) => {
+      futureList.innerHTML = ""; // Kosongkan daftar sebelum render ulang
+      snapshot.docs.forEach((doc) => {
+        renderListItem(doc);
+      });
+      // Refresh AOS untuk item baru setelah transisi selesai
+      setTimeout(() => {
+        AOS.refresh();
+      }, 100);
+    },
+    (error) => {
+      console.error("Error mendapatkan update real-time: ", error);
+    }
+  );
+};
+
+const authenticateAndListen = async () => {
+  try {
+    await signInAnonymously(auth);
+    console.log("Signed in anonymously successfully!");
+    setupRealtimeListener();
+  } catch (error) {
+    console.error("Authentication failed:", error);
+    // Pesan error yang lebih spesifik
+    alert(
+      "Tidak bisa terhubung ke database. Penyebab paling umum: Metode 'Anonymous' sign-in belum diaktifkan di Firebase Console. Silakan cek file 'firebase-setup.md' lagi."
+    );
+  }
+};
+
+// --- Event Listeners ---
 addButton.addEventListener("click", addNewItem);
-inputField.addEventListener("keypress", function (e) {
+inputField.addEventListener("keypress", (e) => {
   if (e.key === "Enter") addNewItem();
 });
-futureList.addEventListener("click", function (e) {
+futureList.addEventListener("click", (e) => {
   if (e.target && e.target.classList.contains("delete-btn")) {
     const listItem = e.target.closest("li");
-    if (listItem) {
+    const id = listItem.getAttribute("data-id");
+    if (id) {
       listItem.style.transition = "opacity 0.3s ease";
       listItem.style.opacity = "0";
-      setTimeout(() => {
-        listItem.remove();
-      }, 300);
+      setTimeout(() => deleteItem(id), 300);
     }
   }
 });
+
+// --- Memulai Proses ---
+authenticateAndListen();
