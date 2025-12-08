@@ -8,12 +8,14 @@ import {
   getFirestore,
   collection,
   addDoc,
+  updateDoc,
   onSnapshot,
   deleteDoc,
   doc,
   query,
   orderBy,
   serverTimestamp,
+  where,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 // Tambahan Import Storage untuk Upload Foto
 import {
@@ -21,6 +23,7 @@ import {
   ref,
   uploadBytes,
   getDownloadURL,
+  deleteObject,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 // --- Konfigurasi Firebase ---
@@ -329,147 +332,379 @@ if (document.getElementById("quote-display")) {
 }
 
 // ==========================================
-// BAGIAN 2: FITUR JURNAL (Journey.html)
+// BAGIAN 2: HALAMAN JURNAL & ALBUM
 // ==========================================
 
-// Cek apakah elemen journey-list ada? Jika ada, jalankan fitur Jurnal
 if (document.getElementById("journey-list")) {
 
   const journeyCollectionRef = collection(db, "journeyLogs");
+  const albumsCollectionRef = collection(db, "albums");
+  
   const journeyListEl = document.getElementById("journey-list");
   const journeyForm = document.getElementById("journey-form");
-  const progressBarContainer = document.getElementById("upload-progress-container");
-  const progressBar = document.querySelector(".progress-bar");
+  const albumsListEl = document.getElementById("albums-list");
+  const createAlbumForm = document.getElementById("create-album-form");
 
-  // Render Item Jurnal
+  // --- HELPER: Mengambil Nama Album ---
+  // Kita simpan nama album di cache sederhana biar gak query terus
+  let albumsCache = {}; 
+
+  const fetchAlbumsForDropdown = async () => {
+    const q = query(albumsCollectionRef, orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    const selectAdd = document.getElementById("trip-album-select");
+    const selectEdit = document.getElementById("edit-trip-album-select");
+    
+    // Reset options
+    const defaultOpt = '<option value="">-- Tidak masuk album --</option>';
+    if(selectAdd) selectAdd.innerHTML = defaultOpt;
+    if(selectEdit) selectEdit.innerHTML = defaultOpt;
+
+    albumsCache = {}; // Reset cache
+
+    snapshot.forEach((doc) => {
+        const data = doc.data();
+        albumsCache[doc.id] = data.title; // Simpan ke cache
+        const option = `<option value="${doc.id}">${data.title}</option>`;
+        if(selectAdd) selectAdd.innerHTML += option;
+        if(selectEdit) selectEdit.innerHTML += option;
+    });
+  };
+
+  // --- RENDER ITEM JURNAL ---
   const renderJourneyItem = (doc) => {
     const data = doc.data();
     const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     let formattedDate = "";
-    try {
-      formattedDate = new Date(data.date).toLocaleDateString('id-ID', dateOptions);
-    } catch (e) { formattedDate = data.date; }
+    try { formattedDate = new Date(data.date).toLocaleDateString('id-ID', dateOptions); } catch (e) { formattedDate = data.date; }
+
+    // Cek nama album dari cache
+    const albumName = data.albumId && albumsCache[data.albumId] ? albumsCache[data.albumId] : null;
+    const albumBadge = albumName ? `<span class="badge bg-pink mb-2"><i class="bi bi-journal-album"></i> ${albumName}</span>` : '';
 
     const col = document.createElement("div");
-    col.className = "col-md-6 col-lg-4 mb-4"; // Grid Responsive
+    col.className = "col-md-6 col-lg-4 mb-4"; 
     col.setAttribute("data-aos", "fade-up");
     
     col.innerHTML = `
-      <div class="card h-100 shadow-sm border-0 journey-card" style="border-radius: 12px; overflow: hidden;">
+      <div class="card h-100 shadow-sm border-0 journey-card clickable-card" 
+           style="border-radius: 12px; overflow: hidden; cursor: pointer;"
+           data-bs-toggle="modal" 
+           data-bs-target="#detailModal"
+           data-id="${doc.id}" 
+           data-title="${data.title}"
+           data-date="${data.date}" 
+           data-desc="${data.description}"
+           data-img="${data.imageUrl}"
+           data-album-id="${data.albumId || ''}"
+           data-album-name="${albumName || ''}">
         <div class="card-img-wrapper" style="height: 250px; overflow:hidden; position:relative;">
           <img src="${data.imageUrl}" class="card-img-top" style="width:100%; height:100%; object-fit:cover; transition: transform 0.5s ease;" alt="${data.title}">
+          <div style="position: absolute; top: 10px; right: 10px;">
+            ${albumBadge}
+          </div>
         </div>
         <div class="card-body">
           <h5 class="card-title text-pink" style="font-family: 'Pacifico', cursive; color: #ff8fab;">${data.title}</h5>
           <h6 class="card-subtitle mb-2 text-muted small"><i class="bi bi-calendar-heart"></i> ${formattedDate}</h6>
-          <p class="card-text mt-3">${data.description}</p>
+          <p class="card-text mt-3 line-clamp-3">${data.description}</p>
         </div>
       </div>
     `;
-    journeyListEl.prepend(col); // Taruh item baru di paling awal
+    journeyListEl.prepend(col);
   };
 
-  // Simpan listener di window agar bisa dipanggil setelah Auth
-  window.setupJourneyListener = () => {
-    const q = query(journeyCollectionRef, orderBy("date", "asc"));
-    onSnapshot(q, (snapshot) => {
-      journeyListEl.innerHTML = "";
-      if(snapshot.empty) {
-        journeyListEl.innerHTML = '<div class="col-12 text-center text-muted py-5"><p>Belum ada cerita nih. Tambahin yuk!</p></div>';
-      }
-      snapshot.docs.forEach((doc) => {
-        renderJourneyItem(doc);
-      });
-      setTimeout(() => AOS.refresh(), 100);
+  // --- RENDER ITEM ALBUM ---
+  const renderAlbumItem = (doc) => {
+      const data = doc.data();
+      const col = document.createElement("div");
+      col.className = "col-md-6 col-lg-4";
+      col.setAttribute("data-aos", "zoom-in");
+
+      col.innerHTML = `
+        <div class="card album-card border-0 text-white shadow overflow-hidden" 
+             style="border-radius: 15px; height: 200px;"
+             onclick="window.filterByAlbum('${doc.id}', '${data.title}')">
+            <img src="${data.coverUrl}" class="card-img" style="height: 100%; object-fit: cover;" alt="${data.title}">
+            <div class="card-img-overlay album-overlay d-flex flex-column justify-content-end p-4">
+                <h3 class="card-title" style="font-family: 'Pacifico', cursive;">${data.title}</h3>
+                <p class="card-text small opacity-75">${data.description || 'Kumpulan kenangan indah'}</p>
+            </div>
+        </div>
+      `;
+      albumsListEl.prepend(col);
+  };
+
+  // --- LISTENER JURNAL UTAMA ---
+  let unsubscribeJourney = null;
+  window.setupJourneyListener = (startDate = null, endDate = null, albumId = null) => {
+    if (unsubscribeJourney) unsubscribeJourney();
+
+    let queryConstraints = [orderBy("date", "asc")];
+    
+    // Filter Logic
+    if (startDate) queryConstraints.push(where("date", ">=", startDate));
+    if (endDate) queryConstraints.push(where("date", "<=", endDate));
+    if (albumId) queryConstraints.push(where("albumId", "==", albumId));
+
+    const q = query(journeyCollectionRef, ...queryConstraints);
+
+    unsubscribeJourney = onSnapshot(q, (snapshot) => {
+        journeyListEl.innerHTML = "";
+        if(snapshot.empty) {
+            journeyListEl.innerHTML = '<div class="col-12 text-center text-muted py-5"><p>Tidak ada kenangan yang ditemukan.</p></div>';
+        }
+        snapshot.docs.forEach((doc) => renderJourneyItem(doc));
+        setTimeout(() => AOS.refresh(), 100);
     });
   };
 
-  // Handle Submit Form
+  // --- LISTENER ALBUM ---
+  window.setupAlbumsListener = () => {
+      const q = query(albumsCollectionRef, orderBy("createdAt", "asc"));
+      onSnapshot(q, (snapshot) => {
+          albumsListEl.innerHTML = "";
+          if(snapshot.empty) {
+              albumsListEl.innerHTML = '<div class="col-12 text-center text-muted py-5"><p>Belum ada album. Buat yuk!</p></div>';
+          }
+          snapshot.docs.forEach((doc) => renderAlbumItem(doc));
+      });
+  };
+
+  // --- FUNGSI GLOBAL: FILTER BY ALBUM (Dipanggil dari HTML onclick) ---
+  window.filterByAlbum = (albumId, albumTitle) => {
+      // 1. Pindah Tab ke Timeline
+      const triggerEl = document.querySelector('#pills-timeline-tab');
+      const tabInstance = new bootstrap.Tab(triggerEl);
+      tabInstance.show();
+
+      // 2. Set Banner Filter
+      const banner = document.getElementById("active-filter-banner");
+      const filterText = document.getElementById("filter-text");
+      banner.classList.remove("d-none");
+      filterText.innerHTML = `Menampilkan Album: <strong>${albumTitle}</strong>`;
+
+      // 3. Jalankan Query Filter
+      window.setupJourneyListener(null, null, albumId);
+
+      // 4. Setup Tombol Clear
+      document.getElementById("btn-clear-album-filter").onclick = () => {
+          banner.classList.add("d-none");
+          window.setupJourneyListener(); // Reset ke semua
+      };
+  };
+
+  // --- TAMBAH CERITA (DENGAN ALBUM) ---
+  const btnOpenAdd = document.getElementById("btn-open-add-trip");
+  if(btnOpenAdd) {
+      btnOpenAdd.addEventListener("click", () => {
+          fetchAlbumsForDropdown(); // Refresh list album sebelum buka modal
+          const modal = new bootstrap.Modal(document.getElementById('addTripModal'));
+          modal.show();
+      });
+  }
+
   if (journeyForm) {
     journeyForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      
       const title = document.getElementById("trip-title").value;
       const date = document.getElementById("trip-date").value;
       const desc = document.getElementById("trip-desc").value;
+      const albumId = document.getElementById("trip-album-select").value;
       const imageFile = document.getElementById("trip-image").files[0];
 
       if (!imageFile) return alert("Pilih foto dulu ya!");
 
-      // UI Loading
       const btnSave = document.getElementById("btn-save-trip");
-      const originalBtnText = btnSave.innerHTML;
       btnSave.disabled = true;
       btnSave.innerHTML = "Sedang Mengupload...";
-      progressBarContainer.classList.remove("d-none");
-      progressBar.style.width = "30%";
+      document.getElementById("upload-progress-container").classList.remove("d-none");
+      document.querySelector("#upload-progress-container .progress-bar").style.width = "50%";
 
       try {
-        // 1. Upload ke Storage
         const storageRef = ref(storage, 'trip-images/' + Date.now() + '-' + imageFile.name);
         const snapshot = await uploadBytes(storageRef, imageFile);
-        progressBar.style.width = "80%";
-        
-        // 2. Ambil URL
         const downloadURL = await getDownloadURL(snapshot.ref);
 
-        // 3. Simpan ke Firestore
         await addDoc(journeyCollectionRef, {
-          title: title,
-          date: date,
-          description: desc,
-          imageUrl: downloadURL,
-          createdAt: serverTimestamp()
+          title, date, description: desc, imageUrl: downloadURL, albumId: albumId, createdAt: serverTimestamp()
         });
 
-        // Tutup Modal & Reset
         journeyForm.reset();
-        
-        // Menutup Modal Bootstrap dengan aman
-        const modalEl = document.getElementById('addTripModal');
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        if (modal) {
-            modal.hide();
-        } else {
-            // Fallback jika instance belum ada
-            new bootstrap.Modal(modalEl).hide();
-        }
-        
+        bootstrap.Modal.getInstance(document.getElementById('addTripModal')).hide();
         alert("Berhasil disimpan! ❤️");
 
       } catch (error) {
         console.error("Error:", error);
-        alert("Gagal menyimpan: " + error.message);
+        alert("Gagal: " + error.message);
       } finally {
         btnSave.disabled = false;
-        btnSave.innerHTML = originalBtnText;
-        progressBarContainer.classList.add("d-none");
-        progressBar.style.width = "0%";
+        btnSave.innerHTML = '<i class="bi bi-cloud-upload-fill"></i> Simpan Sekarang';
+        document.getElementById("upload-progress-container").classList.add("d-none");
       }
     });
   }
+
+  // --- BUAT ALBUM BARU ---
+  if (createAlbumForm) {
+      createAlbumForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const title = document.getElementById("album-title").value;
+          const desc = document.getElementById("album-desc").value;
+          const imageFile = document.getElementById("album-cover").files[0];
+
+          if (!imageFile) return alert("Pilih cover album dulu!");
+
+          const btnSave = document.getElementById("btn-save-album");
+          btnSave.disabled = true;
+          btnSave.innerHTML = "Membuat Album...";
+          document.getElementById("album-progress-container").classList.remove("d-none");
+          document.querySelector("#album-progress-container .progress-bar").style.width = "50%";
+
+          try {
+              const storageRef = ref(storage, 'album-covers/' + Date.now() + '-' + imageFile.name);
+              const snapshot = await uploadBytes(storageRef, imageFile);
+              const downloadURL = await getDownloadURL(snapshot.ref);
+
+              await addDoc(albumsCollectionRef, {
+                  title, description: desc, coverUrl: downloadURL, createdAt: serverTimestamp()
+              });
+
+              createAlbumForm.reset();
+              bootstrap.Modal.getInstance(document.getElementById('createAlbumModal')).hide();
+              fetchAlbumsForDropdown(); // Refresh dropdown
+              alert("Album berhasil dibuat! 📁");
+
+          } catch (error) {
+              console.error("Error create album:", error);
+              alert("Gagal membuat album.");
+          } finally {
+              btnSave.disabled = false;
+              btnSave.innerHTML = '<i class="bi bi-folder-plus"></i> Buat Album';
+              document.getElementById("album-progress-container").classList.add("d-none");
+          }
+      });
+  }
+
+  // --- LOGIC DETAIL MODAL (EDIT & DELETE) ---
+  const detailModalEl = document.getElementById('detailModal');
+  let currentDocId = null;
+  let currentImgUrl = null;
+
+  if (detailModalEl) {
+    detailModalEl.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        currentDocId = button.getAttribute('data-id');
+        currentImgUrl = button.getAttribute('data-img');
+        const albumName = button.getAttribute('data-album-name');
+
+        // Isi Modal
+        this.querySelector('#detailModalTitle').textContent = button.getAttribute('data-title');
+        this.querySelector('#detailModalDate').textContent = button.getAttribute('data-date'); // Raw date or formatted is ok
+        this.querySelector('#detailModalDescription').textContent = button.getAttribute('data-desc');
+        this.querySelector('#detailModalImage').src = currentImgUrl;
+        
+        const badgeEl = this.querySelector('#detailModalAlbumBadge');
+        badgeEl.innerHTML = albumName ? `<span class="badge bg-pink"><i class="bi bi-journal-album"></i> ${albumName}</span>` : '';
+    });
+
+    // Delete
+    document.getElementById('btn-delete-entry').addEventListener('click', async () => {
+        if(confirm("Yakin hapus?")) {
+            try {
+                await deleteDoc(doc(db, "journeyLogs", currentDocId));
+                try { await deleteObject(ref(storage, currentImgUrl)); } catch(e){}
+                bootstrap.Modal.getInstance(detailModalEl).hide();
+            } catch (e) { alert("Gagal hapus."); }
+        }
+    });
+
+    // Edit (Open Modal)
+    document.getElementById('btn-edit-entry').addEventListener('click', async () => {
+        bootstrap.Modal.getInstance(detailModalEl).hide();
+        // Fetch albums first
+        await fetchAlbumsForDropdown();
+        
+        // Populate Form
+        const originalCard = document.querySelector(`.journey-card[data-id="${currentDocId}"]`);
+        if(originalCard) {
+            document.getElementById('edit-doc-id').value = currentDocId;
+            document.getElementById('edit-old-image-url').value = currentImgUrl;
+            document.getElementById('edit-trip-title').value = detailModalEl.querySelector('#detailModalTitle').textContent;
+            // Note: retrieving raw data from attributes is safer
+            document.getElementById('edit-trip-date').value = originalCard.getAttribute('data-date'); // Must be YYYY-MM-DD
+            document.getElementById('edit-trip-desc').value = originalCard.getAttribute('data-desc');
+            document.getElementById('edit-trip-album-select').value = originalCard.getAttribute('data-album-id');
+        }
+        new bootstrap.Modal(document.getElementById('editTripModal')).show();
+    });
+  }
+
+  // --- SUBMIT EDIT FORM ---
+  const editForm = document.getElementById('edit-journey-form');
+  if(editForm) {
+      editForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const docId = document.getElementById('edit-doc-id').value;
+          const oldImageUrl = document.getElementById('edit-old-image-url').value;
+          const title = document.getElementById('edit-trip-title').value;
+          const date = document.getElementById('edit-trip-date').value;
+          const desc = document.getElementById('edit-trip-desc').value;
+          const albumId = document.getElementById('edit-trip-album-select').value;
+          const imageFile = document.getElementById('edit-trip-image').files[0];
+
+          const btnUpdate = document.getElementById('btn-update-trip');
+          btnUpdate.disabled = true;
+          btnUpdate.innerText = "Mengupdate...";
+
+          try {
+              let finalImageUrl = oldImageUrl;
+              if (imageFile) {
+                  const newStorageRef = ref(storage, 'trip-images/' + Date.now() + '-' + imageFile.name);
+                  const snapshot = await uploadBytes(newStorageRef, imageFile);
+                  finalImageUrl = await getDownloadURL(snapshot.ref);
+                  try { await deleteObject(ref(storage, oldImageUrl)); } catch(e){}
+              }
+
+              await updateDoc(doc(db, "journeyLogs", docId), {
+                  title, date, description: desc, imageUrl: finalImageUrl, albumId
+              });
+
+              bootstrap.Modal.getInstance(document.getElementById('editTripModal')).hide();
+              alert("Data terupdate!");
+          } catch (error) {
+              console.error(error);
+              alert("Gagal update.");
+          } finally {
+              btnUpdate.disabled = false;
+              btnUpdate.innerHTML = '<i class="bi bi-save-fill"></i> Update Kenangan';
+          }
+      });
+  }
 }
 
-// ==========================================
-// BAGIAN 3: OTENTIKASI & START UP
-// ==========================================
-
+// --- OTENTIKASI & START ---
 const authenticateAndListen = async () => {
   try {
     await signInAnonymously(auth);
     console.log("Signed in anonymously!");
     
-    // Jalankan listener sesuai halaman yang sedang dibuka
-    if (typeof window.setupBucketListListener === 'function') {
-        window.setupBucketListListener();
-    }
+    // Fetch data awal
+    if (typeof window.setupBucketListListener === 'function') window.setupBucketListListener();
     if (typeof window.setupJourneyListener === 'function') {
-        window.setupJourneyListener();
+        // Ambil data albums dulu untuk cache nama album
+        const albumsCollectionRef = collection(db, "albums");
+        const q = query(albumsCollectionRef, orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
+        // Pre-fill cache album nama (Manual simple cache)
+        // Di aplikasi besar sebaiknya pakai state management, tapi ini cukup.
+        // Kita panggil setupJourneyListener setelah fetch albums biar render namanya bener.
+        window.setupJourneyListener(); 
+        window.setupAlbumsListener();
     }
 
   } catch (error) {
     console.error("Auth failed:", error);
-    alert("Koneksi Database Gagal. Pastikan internet lancar ya.");
   }
 };
 
