@@ -28,7 +28,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyBOsDhRSsXzBvPFHrx-vOMmzOxKE20Wjp4",
   authDomain: "birthdayvania.firebaseapp.com",
   projectId: "birthdayvania",
-  storageBucket: "birthdayvania.appspot.com",
+  storageBucket: "birthdayvania.firebasestorage.app",
   messagingSenderId: "693336676503",
   appId: "1:693336676503:web:8f5823164a37633f4671d2",
   measurementId: "G-D40CGYLLMR",
